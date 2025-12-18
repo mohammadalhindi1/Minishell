@@ -5,6 +5,7 @@
 ابو الهندي هناك تحديث جديد
 
 هكذا سيصلك الinput من عندي 
+```bash
 cmd1:
     command = "echo"
     args = ["echo", "hello"]
@@ -12,5 +13,6 @@ cmd1:
     outfile = NULL
     append = FALSE
     heredoc = NULL
+    ```
 
     
