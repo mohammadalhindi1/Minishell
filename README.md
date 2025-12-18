@@ -13,7 +13,3 @@ cmd1:
     outfile = NULL
     append = FALSE
     heredoc = NULL
-
-
-
-    
