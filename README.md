@@ -14,3 +14,7 @@ cmd1:
     outfile = NULL
     append = FALSE
     heredoc = NULL
+
+Parsing = أفهم شو المستخدم كتب (تقسيم + quotes + redirections + pipes + بناء structure)
+
+Execution = نفّذ اللي فهمته (processes + pipes + dup2 + execve + open/close + builtins)
