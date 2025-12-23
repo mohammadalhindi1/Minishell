@@ -1,117 +1,182 @@
-ابو الهندي
+# Minishell
 
-هذه الفايلات هي ليست نهاية الجزء الخاص بي بل يجب ان اضيف امور اخرى ويجب علي ان اقصر بعض الفانكشينز وهذا سيؤدي الى فايلات كثيرة جدا اقول لك هذا ليكون لك علم ماذا يحصل هنا ^_^
+A minimal Unix shell implemented in C as part of the 42 curriculum.
 
-هكذا سيصلك الinput 
+This project focuses on understanding how a shell works internally:
+process creation, pipes, redirections, signals, and command parsing.
+
+---
 ```bash
-cmd1:
-    command = "echo"
-    args = ["echo", "hello"]
-    infile = NULL
-    outfile = NULL
-    append = FALSE
-    heredoc = NULL
+make
+./minishell
+valgrind ./minishell
+valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes --trace-children=yes ./minishell
 ```
------------------------------------------------------------لما ارجع بكمل طالع مشوار================================================
-❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗
-Tests to run now (Checklist)
-1) Pipes
+
+Project Status (Current)
+What is working now good
+Interactive shell prompt using readline
+Command execution using fork / execve
+Pipes |
+Redirections:
+input <
+output >
+append >>
+Waiting for children processes
+Proper error messages for:
+command not found
+missing files
+permission denied
+
+Tested examples:
+```
+echo hello | wc -l
+echo hello > out
+cat < out
+echo b >> out
+cat < out | wc -l
+``` 
+Everything above is working correctly.
+
+Shared Structure (Execution Contract)
+Parsing sends execution an array of commands using the following structure:
+```
+typedef struct s_cmd
+{
+    char **args;      // argv-style array, args[0] is the command
+    char *infile;     // file for '<' redirection (NULL if none)
+    char *outfile;    // file for '>' or '>>' (NULL if none)
+    int   append;     // 0 => '>', 1 => '>>'
+    char *heredoc;    // delimiter for '<<' (NULL if none)
+} t_cmd;
+```
+The parser is responsible for building this structure correctly
+The executor only relies on this structure and does NOT re-parse input
+
+Work Split :
+
+```
+Execution (Hindi)
+Responsible for everything after parsing:
+execute_pipeline()
+Pipes handling (pipe, dup2)
+Process creation (fork, execve)
+Redirections <, >, >>
+Heredoc execution logic
+Waiting for children & exit status
+Error handling and messages
+
+
+Parsing (Omar)
+Responsible for transforming raw input into t_cmd[]:
+Tokenizing input
+Syntax validation
+Handling quotes
+Building the t_cmd array correctly
+Important for parsing:
+Execution assumes parsing is correct.
+If parsing outputs invalid t_cmd, execution behavior is undefined.
+```
+
+Tests to Run Now (Execution + Parsing)
+Pipes
+```
 ls | wc -l
 cat file | grep hello | wc -l
+```
 
-2) Redirections
+Redirections
+```
 echo a > out && cat < out
 echo b >> out && cat < out
-cat < missingfile (should show error)
+cat < missingfile
+```
 
-3) Quotes (must behave like bash)
-echo "hello world"
-echo 'hello $USER' (no expansion in single quotes later)
-echo "$USER" (expansion later)
-echo "a | b" (pipe inside quotes must NOT split)
-echo "a > b" (redir inside quotes must NOT apply)
 
-4) Mixed redirections + pipes
+Mixed pipes + redirections
+```
 cat < out | wc -l
 echo hello | wc -l > count.txt
 cat < out | wc -l >> log.txt
+```
 
-5) Heredoc (to implement/verify)
-cat << EOF
-type lines
-end with EOF
+Parsing Rules That MUST Work (Omar)
+Quotes must behave like bash:
+```
+echo "hello world"
+echo 'hello $USER'     # no expansion inside single quotes
+echo "$USER"           # expansion later
+echo "a | b"           # pipe inside quotes must NOT split
+echo "a > b"           # redirection inside quotes must NOT apply
+```
 
-6) Exit status (to implement/verify)
-false then check $? later (expansion later)
-ls notfound should return non-zero
+Syntax errors must be detected:
 
-What is left to reach a real Minishell
-Parsing improvements (Omar)
-Correct handling of quotes (remove quotes, keep content, don’t split operators inside quotes)
-Better syntax errors and edge cases:
-| |, | at start/end
+| |
+pipe at start or end
 missing file after < > >> <<
-Proper heredoc parsing & delimiter rules
-Environment expansion:
+Heredoc parsing:
+delimiter must be exact
+stop reading only on exact match
+no history entry for heredoc input
+Environment expansion (later):
 $VAR
 $?
 
-Execution improvements (Hindi)
-Heredoc execution details (feeding input safely)
-Builtins (later):
-cd, export, unset, exit, env, pwd, echo -n
+Heredoc (To Implement / Verify)
+```
+cat << EOF
+type lines
+end with EOF
+```
+
+Also:
+```
+cat << EOF | wc -l
+a
+b
+EOF
+```
+Ctrl-C during heredoc must:
+cancel heredoc
+return to a clean prompt
+not execute the pipeline
+
+```
+Exit Status (To Implement / Verify) :
+Last command in pipeline defines exit status
+command not found => 127
+signal termination => 128 + signal number
+$? expansion (later)
+
+What Is Still Missing (Planned):
+
+Parsing (Omar):
+Correct quote handling
+Full syntax validation
+Environment expansion $VAR, $?
+Robust heredoc parsing rules
+```
+
+Execution (Hindi):
+Final heredoc polish
+Builtins:
+```
+cd
+export
+unset
+exit
+env
+pwd
+echo -n
 Signal behavior like bash:
-Ctrl-C new prompt
-Ctrl-D exit
-Ctrl-\ ignore
-Exit status rules (last command in pipeline)
-
-شو هذا مهم
+Ctrl-C → new prompt
+Ctrl-D → exit shell
+Ctrl-\ → ignored
+Valgrind / memory cleanup (planned)
 ```
-## Project status (current)
 
-### What is working now
-- minishell prompt using readline
-- command execution with fork / execve
-- pipes `|`
-- redirections:
-  - input `<`
-  - output `>`
-  - append `>>`
-
-Tested examples:
-- `echo hello | wc -l`
-- `echo hello > out`
-- `cat < out`
-
-Everything above is working.
-
----
-
-### Work split
-**Execution (Hindi):**
-- execute_pipeline()
-- handling pipes, fork, dup2, execve
-- input/output redirections
-- waiting for children and exit status
-
-**Parsing (Omar):**
-- tokenizing input
-- syntax validation
-- building `t_cmd` structure from user input
-
----
-
-### Shared structure (contract)
-Parsing sends execution this structure:
-
-```c
-typedef struct s_cmd {
-    char **args;
-    char *infile;
-    char *outfile;
-    int   append;
-    char *heredoc;
-} t_cmd;
-
-```
+Notes:
+Execution and parsing are strictly separated
+The t_cmd structure is the only contract between them
+Keeping this separation is critical for project stability
