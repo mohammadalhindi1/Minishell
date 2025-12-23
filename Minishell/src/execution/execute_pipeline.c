@@ -12,66 +12,53 @@
 
 #include "minishell.h"
 
-void	close_fd(int fd)
+static int	wait_last_status(pid_t *pids, int n)
 {
-	if (fd >= 0)
-		close(fd);
-}
-
-static int	spawn_one_cmd(t_cmd *cmds, int i, int n, int *prev_read, pid_t *pids, char **envp)
-{
-	int	pipe_fd[2];
-
-	pipe_fd[0] = -1;
-	pipe_fd[1] = -1;
-	if (i < n - 1 && pipe(pipe_fd) == -1)
-		return (perror("pipe"), 1);
-	pids[i] = fork();
-	if (pids[i] == -1)
-		return (perror("fork"), 1);
-	if (pids[i] == 0)
-		child_run(&cmds[i], i, n, *prev_read, pipe_fd, envp);
-	close_fd(*prev_read);
-	if (i < n - 1)
-	{
-		close_fd(pipe_fd[1]);
-		*prev_read = pipe_fd[0];
-	}
-	return (0);
-}
-
-static int	wait_all_children(pid_t *pids, int n)
-{
-	int	i;
-	int	status;
+	int		i;
+	int		status;
+	int		last_status;
+	pid_t	last_pid;
 
 	i = 0;
+	last_status = 0;
+	last_pid = pids[n - 1];
 	while (i < n)
 	{
-		waitpid(pids[i], &status, 0);
-		if (WIFEXITED(status))
-			g_exit_status = WEXITSTATUS(status);
-		else if (WIFSIGNALED(status))
-			g_exit_status = 128 + WTERMSIG(status);
+		if (waitpid(pids[i], &status, 0) > 0)
+		{
+			if (pids[i] == last_pid)
+				last_status = status;
+		}
 		i++;
 	}
+	if (WIFEXITED(last_status))
+		g_exit_status = WEXITSTATUS(last_status);
+	else if (WIFSIGNALED(last_status))
+		g_exit_status = 128 + WTERMSIG(last_status);
 	return (g_exit_status);
 }
 
 int	execute_pipeline(t_cmd *cmds, int n, char **envp)
 {
-	int		i;
-	int		prev_read;
-	pid_t	pids[1024];
+	t_exec_ctx	x;
 
-	prev_read = -1;
-	i = 0;
-	while (i < n)
+	if (!cmds || n <= 0)
+		return (0);
+	x.n = n;
+	x.envp = envp;
+	x.prev_read = -1;
+	if (prepare_heredocs(cmds, n, x.hd_fds))
+		return (g_exit_status);
+	x.i = 0;
+	while (x.i < n)
 	{
-		if (spawn_one_cmd(cmds, i, n, &prev_read, pids, envp))
+		if (spawn_cmd(cmds, &x))
 			return (1);
-		i++;
+		x.i++;
 	}
-	close_fd(prev_read);
-	return (wait_all_children(pids, n));
+	close_fd(x.prev_read);
+	x.i = 0;
+	while (x.i < n)
+		close_fd(x.hd_fds[x.i++]);
+	return (wait_last_status(x.pids, n));
 }

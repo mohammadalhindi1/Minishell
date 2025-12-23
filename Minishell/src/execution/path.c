@@ -20,10 +20,7 @@ static void	free_split(char **s)
 		return ;
 	i = 0;
 	while (s[i])
-	{
-		free(s[i]);
-		i++;
-	}
+		free(s[i++]);
 	free(s);
 }
 
@@ -58,35 +55,38 @@ static char	*join_path(const char *a, const char *b)
 	return (out);
 }
 
+static char	*search_in_paths(char **paths, char *cmd)
+{
+	char	*full;
+	int		i;
+
+	i = 0;
+	while (paths[i])
+	{
+		full = join_path(paths[i], cmd);
+		if (full && access(full, X_OK) == 0)
+			return (full);
+		free(full);
+		i++;
+	}
+	return (NULL);
+}
+
 char	*find_exec_path(char *cmd, char **envp)
 {
 	char	**paths;
 	char	*path_env;
 	char	*full;
-	int		i;
 
 	if (!cmd || !cmd[0])
 		return (NULL);
-	if (ft_strchr(cmd, '/'))
-		return (access(cmd, X_OK) == 0 ? ft_strdup(cmd) : NULL);
 	path_env = get_env_value(envp, "PATH");
 	if (!path_env)
 		return (NULL);
 	paths = ft_split(path_env, ':');
 	if (!paths)
 		return (NULL);
-	i = 0;
-	while (paths[i])
-	{
-		full = join_path(paths[i], cmd);
-		if (full && access(full, X_OK) == 0)
-		{
-			free_split(paths);
-			return (full);
-		}
-		free(full);
-		i++;
-	}
+	full = search_in_paths(paths, cmd);
 	free_split(paths);
-	return (NULL);
+	return (full);
 }

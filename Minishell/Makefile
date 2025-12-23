@@ -6,7 +6,7 @@
 #    By: malhendi <malhendi@student.42amman.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/03 20:38:42 by malhendi          #+#    #+#              #
-#    Updated: 2025/12/22 11:58:29 by malhendi         ###   ########.fr        #
+#    Updated: 2025/12/23 14:08:14 by malhendi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,10 @@ RESET     = \033[0m
 SRCS = \
 	$(SRC_DIR)/minishell.c \
 	$(SRC_DIR)/execution/execute_pipeline.c \
+	$(SRC_DIR)/execution/execute_pipeline_utils.c \
 	$(SRC_DIR)/execution/child.c \
+	$(SRC_DIR)/execution/child_exec.c \
+	$(SRC_DIR)/execution/exec_utils.c \
 	$(SRC_DIR)/execution/redir.c \
 	$(SRC_DIR)/execution/heredoc.c \
 	$(SRC_DIR)/execution/path.c \

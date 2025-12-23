@@ -16,15 +16,11 @@ int	get_cmd_input_fd(t_cmd *cmd)
 {
 	int	fd;
 
-	if (!cmd)
-		return (-1);
-	if (cmd->heredoc)
-		return (open_heredoc_fd(cmd->heredoc));
-	if (!cmd->infile)
+	if (!cmd || !cmd->infile)
 		return (-1);
 	fd = open(cmd->infile, O_RDONLY);
 	if (fd < 0)
-		perror(cmd->infile);
+		minishell_perror(cmd->infile);
 	return (fd);
 }
 
@@ -42,6 +38,6 @@ int	get_cmd_output_fd(t_cmd *cmd)
 		flags |= O_TRUNC;
 	fd = open(cmd->outfile, flags, 0644);
 	if (fd < 0)
-		perror(cmd->outfile);
+		minishell_perror(cmd->outfile);
 	return (fd);
 }
