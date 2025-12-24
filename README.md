@@ -175,7 +175,6 @@ Ctrl-D → exit shell
 Ctrl-\ → ignored
 Valgrind / memory cleanup (planned)
 ```
-
 Notes:
 Execution and parsing are strictly separated
 The t_cmd structure is the only contract between them
