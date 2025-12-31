@@ -36,7 +36,6 @@ cat < out
 echo b >> out
 cat < out | wc -l
 ``` 
-Everything above is working correctly.
 
 Shared Structure (Execution Contract)
 Parsing sends execution an array of commands using the following structure:
@@ -175,7 +174,4 @@ Ctrl-D → exit shell
 Ctrl-\ → ignored
 Valgrind / memory cleanup (planned)
 ```
-Notes:
-Execution and parsing are strictly separated
-The t_cmd structure is the only contract between them
-Keeping this separation is critical for project stability
+
