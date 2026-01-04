@@ -45,13 +45,31 @@ static void	free_cmds(t_cmd *cmds, int n)
 	free(cmds);
 }
 
+static void	handle(int sig)
+{
+    g_exit_status = sig;
+    if (sig == SIGINT)
+    {
+        write(1, "\n", 1);
+        rl_replace_line("", 0);
+        rl_on_new_line();
+        rl_redisplay();
+    }
+}
+
 int	main(int ac, char **av, char **envp)
 {
 	char	*line;
 	t_cmd	*cmds;
 	int		count;
 	t_shell sh;
+	struct sigaction sa;
 
+    memset(&sa, 0, sizeof(sa));
+    sa.sa_handler = handle;
+
+    sigaction(SIGINT, &sa, NULL);
+    sigaction(SIGQUIT, &sa, NULL);
     sh.last_exit_status = 0;
 	(void)ac;
 	(void)av;
