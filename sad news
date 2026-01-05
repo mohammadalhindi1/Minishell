@@ -1,7 +1,5 @@
 mistakes
 
-
-
 1- leak in 
 file not exisst and comand not exist
 < file1 cmd1 | cmd2 file2 >  -- omar
@@ -21,9 +19,6 @@ file not exisst and comand not exist
 
 7- exit  -- hindi
 
-8- history comand -- hindi
-
 9- handle '' "" -- omar
 
-
-10- minishell insside minishell and cntrl c       , echo $SHLVL        bash
+10- minishell insside minishell and cntrl c       , echo $SHLVL bash
