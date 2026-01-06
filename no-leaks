@@ -1,0 +1,7 @@
+how to test without readline leaks
+
+
+1- download this file ---> readline_curses.supp
+
+
+2 - valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline_curses.supp ./minishell
