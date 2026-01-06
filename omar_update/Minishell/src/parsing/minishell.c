@@ -20,7 +20,6 @@ execute_pipeline(cmds, cmd_count, envp);
 No execution assumptions are needed in parsing — just fill this structure correctly.
 Once t_cmd[] is ready, integration is a single call.
 */
-
 static int	is_op(char *t)
 {
 	if (!t)
@@ -60,6 +59,24 @@ static void	free_tokens(char **t)
 		i++;
 	}
 	free(t);
+}
+
+static void	free_cmds_partial(t_cmd *cmds, int n)
+{
+	int	i;
+
+	if (!cmds)
+		return ;
+	i = 0;
+	while (i < n)
+	{
+		free_tokens(cmds[i].args);
+		free(cmds[i].infile);
+		free(cmds[i].outfile);
+		free(cmds[i].heredoc);
+		i++;
+	}
+	free(cmds);
 }
 
 static int	count_cmds(char **t)
@@ -115,7 +132,13 @@ static int	apply_redir(t_cmd *cmd, char **t, int *i)
 
 	op = t[*i];
 	if (!t[*i + 1])
+	{
+		write(2,
+			"minishell: syntax error near unexpected token `newline'\n",
+			56);
+		g_exit_status = 258;
 		return (-1);
+	}
 	val = strip_quotes_dup(t[*i + 1]);
 	if (!val)
 		return (-1);
@@ -153,6 +176,7 @@ int	parse_line(char *line, t_cmd **cmds, int *count, t_shell *sh)
 	char	**expanded;
 	int		i;
 	int		c;
+	int		total;
 
 	if (!line || !cmds || !count)
 		return (-1);
@@ -168,6 +192,7 @@ int	parse_line(char *line, t_cmd **cmds, int *count, t_shell *sh)
 	*cmds = (t_cmd *)ft_calloc(c, sizeof(t_cmd));
 	if (!*cmds)
 		return (free_tokens(t), -1);
+	total = c;
 	*count = c;
 	i = 0;
 	c = 0;
@@ -182,11 +207,23 @@ int	parse_line(char *line, t_cmd **cmds, int *count, t_shell *sh)
 		if (is_op(t[i]))
 		{
 			if (apply_redir(&(*cmds)[c], t, &i) == -1)
-				return (free_tokens(t), -1);
+			{
+				free_tokens(t);
+				free_cmds_partial(*cmds, total);
+				*cmds = NULL;
+				*count = 0;
+				return (-1);
+			}
 			continue ;
 		}
 		if (push_arg(&(*cmds)[c], t[i]) == -1)
-			return (free_tokens(t), -1);
+		{
+			free_tokens(t);
+			free_cmds_partial(*cmds, total);
+			*cmds = NULL;
+			*count = 0;
+			return (-1);
+		}
 		i++;
 	}
 	free_tokens(t);
