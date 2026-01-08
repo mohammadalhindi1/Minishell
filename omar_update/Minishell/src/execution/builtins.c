@@ -78,7 +78,7 @@ static int	builtin_export(t_cmd *cmd, char **envp)
 
 	if (!cmd->args[1])
 	{
-		print_export(envp);   // 👈 استخدم env تبعك
+		print_export(envp); 
 		return (0);
 	}
 	i = 1;
@@ -144,4 +144,5 @@ int	run_builtin(t_cmd *cmd, char **envp)
 	if (!ft_strncmp(cmd->args[0], "exit", 5))
 		builtin_exit(cmd);
 	return (0);
+
 }
