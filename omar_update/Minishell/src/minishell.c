@@ -69,6 +69,7 @@ int	main(int ac, char **av, char **envp)
     sa.sa_handler = handle;
 
     sigaction(SIGINT, &sa, NULL);
+	sa.sa_handler = SIG_IGN;
     sigaction(SIGQUIT, &sa, NULL);
     sh.last_exit_status = 0;
 	(void)ac;
@@ -85,6 +86,7 @@ int	main(int ac, char **av, char **envp)
 			add_history(line);
 		cmds = NULL;
 		count = 0;
+		sh.last_exit_status = g_exit_status;
 		if (parse_line(line, &cmds, &count, &sh) == 0)
 		{
 			execute_pipeline(cmds, count, envp);

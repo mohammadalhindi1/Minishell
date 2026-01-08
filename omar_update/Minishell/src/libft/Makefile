@@ -48,7 +48,7 @@ SRC_FILES =     ft_atoi.c \
 		get_next_line.c \
 		ft_printf.c \
 		ft_conv_char_str.c \
-		ft_conv_numbers.c
+		ft_conv_numbers.c \
 		
 SRC = $(addprefix $(SRCDIR)/, $(SRC_FILES))
 OBJ = $(addprefix $(OBJDIR)/, $(SRC_FILES:.c=.o))
