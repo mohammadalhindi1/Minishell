@@ -39,6 +39,7 @@ SRCS = \
 	$(SRC_DIR)/execution/child_exec.c \
 	$(SRC_DIR)/execution/builtins.c \
 	$(SRC_DIR)/execution/exec_utils.c \
+	$(SRC_DIR)/execution/builtins_helper.c \
 	$(SRC_DIR)/execution/redir.c \
 	$(SRC_DIR)/execution/heredoc.c \
 	$(SRC_DIR)/execution/path.c \
@@ -46,7 +47,10 @@ SRCS = \
 	$(SRC_DIR)/parsing/minishell.c \
 	$(SRC_DIR)/parsing/token.c \
 	$(SRC_DIR)/parsing/valid_check.c \
-	$(SRC_DIR)/parsing/expand.c
+	$(SRC_DIR)/parsing/expand.c \
+	$(SRC_DIR)/helper/free.c \
+	$(SRC_DIR)/helper/slvl.c \
+	$(SRC_DIR)/helper/slvl2.c
 
 OBJS = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 

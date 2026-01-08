@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-static void	free_split(char **s)
+static void	free_split2(char **s)
 {
 	int	i;
 
@@ -87,6 +87,6 @@ char	*find_exec_path(char *cmd, char **envp)
 	if (!paths)
 		return (NULL);
 	full = search_in_paths(paths, cmd);
-	free_split(paths);
+	free_split2(paths);
 	return (full);
 }

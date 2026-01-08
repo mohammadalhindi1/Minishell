@@ -38,46 +38,62 @@ static int	wait_last_status(pid_t *pids, int n)
 	return (g_exit_status);
 }
 
+static void	parent_ignore_signals(struct sigaction *oldint,
+		struct sigaction *oldquit)
+{
+	struct sigaction	ign;
+
+	ft_memset(&ign, 0, sizeof(ign));
+	ign.sa_handler = SIG_IGN;
+	sigaction(SIGINT, &ign, oldint);
+	sigaction(SIGQUIT, &ign, oldquit);
+}
+
+static int	restore_signals_ret(struct sigaction *oldint,
+		struct sigaction *oldquit, int ret)
+{
+	sigaction(SIGINT, oldint, NULL);
+	sigaction(SIGQUIT, oldquit, NULL);
+	return (ret);
+}
+
+static int	pipeline_finalize(t_exec_ctx *x, struct sigaction *oldint,
+		struct sigaction *oldquit)
+{
+	int	status;
+
+	close_fd(x->prev_read);
+	x->i = 0;
+	while (x->i < x->n)
+		close_fd(x->hd_fds[x->i++]);
+	status = wait_last_status(x->pids, x->n);
+	sigaction(SIGINT, oldint, NULL);
+	sigaction(SIGQUIT, oldquit, NULL);
+	return (status);
+}
+
 int	execute_pipeline(t_cmd *cmds, int n, char **envp)
 {
-	t_exec_ctx	x;
+	t_exec_ctx			x;
 	struct sigaction	oldint;
 	struct sigaction	oldquit;
-	struct sigaction	ign;
 
 	if (!cmds || n <= 0)
 		return (0);
 	if (n == 1 && is_builtin(&cmds[0]))
-	{
-		g_exit_status = run_builtin(&cmds[0], envp);
-		return (g_exit_status);
-	}
-	memset(&ign, 0, sizeof(ign));
-	ign.sa_handler = SIG_IGN;
-	sigaction(SIGINT, &ign, &oldint);
-	sigaction(SIGQUIT, &ign, &oldquit);
+		return (g_exit_status = run_builtin(&cmds[0], envp));
+	parent_ignore_signals(&oldint, &oldquit);
 	x.n = n;
 	x.envp = envp;
 	x.prev_read = -1;
 	if (prepare_heredocs(cmds, n, x.hd_fds))
-		return (sigaction(SIGINT, &oldint, NULL),
-			sigaction(SIGQUIT, &oldquit, NULL),
-			g_exit_status);
+		return (restore_signals_ret(&oldint, &oldquit, g_exit_status));
 	x.i = 0;
 	while (x.i < n)
 	{
 		if (spawn_cmd(cmds, &x))
-			return (sigaction(SIGINT, &oldint, NULL),
-				sigaction(SIGQUIT, &oldquit, NULL),
-				1);
+			return (restore_signals_ret(&oldint, &oldquit, 1));
 		x.i++;
 	}
-	close_fd(x.prev_read);
-	x.i = 0;
-	while (x.i < n)
-		close_fd(x.hd_fds[x.i++]);
-	x.i = wait_last_status(x.pids, n);
-	sigaction(SIGINT, &oldint, NULL);
-	sigaction(SIGQUIT, &oldquit, NULL);
-	return (x.i);
+	return (pipeline_finalize(&x, &oldint, &oldquit));
 }

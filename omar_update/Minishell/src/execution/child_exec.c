@@ -22,16 +22,14 @@ static void	exec_with_slash(t_cmd *cmd, char **envp)
 	exit(126);
 }
 
-
 // omar add
-
 
 static void	free_args(char **args)
 {
 	int	i;
 
 	if (!args)
-		return;
+		return ;
 	i = 0;
 	while (args[i])
 	{
@@ -44,16 +42,13 @@ static void	free_args(char **args)
 static void	free_cmd(t_cmd *cmd)
 {
 	if (!cmd)
-		return;
-
+		return ;
 	free_args(cmd->args);
 	free(cmd->infile);
 	free(cmd->outfile);
 	free(cmd->heredoc);
-
 	free(cmd);
 }
-
 
 // omar add
 

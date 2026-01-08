@@ -26,15 +26,10 @@
 
 # include "libft.h"
 
-
-// omar added this 
 typedef struct s_shell
 {
-    int last_exit_status;
-}   t_shell;
-
-
-
+	int	last_exit_status;
+}	t_shell;
 
 typedef struct s_cmd
 {
@@ -97,13 +92,30 @@ int		check_valid(char *line);
 char	**tokens_func(char *line);
 
 //this too it was : int		parse_line(char *line, t_cmd **cmds, int *count);
-int	parse_line(char *line, t_cmd **cmds, int *count, t_shell *sh);
+int		parse_line(char *line, t_cmd **cmds, int *count, t_shell *sh);
 
 // omar added this 
-char **expand_tokens(char **tokens, t_shell *sh);
-char *expand_one(char *tok, t_shell *sh);
+char	**expand_tokens(char **tokens, t_shell *sh);
+char	*expand_one(char *tok, t_shell *sh);
 
 int		is_builtin(t_cmd *cmd);
-int	run_builtin(t_cmd *cmd, char **envp);
+int		run_builtin(t_cmd *cmd, char **envp);
+int		builtin_cd(t_cmd *cmd);
+int		export_one(const char *arg);
+void	print_export(char **env);
+int		builtin_export(t_cmd *cmd, char **envp);
+
+//free
+void	free_split(char **s);
+void	free_cmds(t_cmd *cmds, int n);
+
+//slvl
+size_t	envp_count(char **envp);
+int		is_shlvl(const char *entry);
+char	*build_shlvl_entry(char *value);
+char	*next_shlvl_value(char *current);
+
+//slvl2
+char	**update_shlvl(char **envp);
 
 #endif

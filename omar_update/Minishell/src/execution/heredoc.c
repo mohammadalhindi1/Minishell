@@ -80,6 +80,7 @@ int	open_heredoc_fd(char *delimiter)
 	int					fd[2];
 	pid_t				pid;
 	struct sigaction	oldint;
+	int					ret;
 
 	if (!delimiter)
 		return (-1);
@@ -91,5 +92,6 @@ int	open_heredoc_fd(char *delimiter)
 		return (sigaction(SIGINT, &oldint, NULL),
 			close_fd(fd[0]), close_fd(fd[1]), -1);
 	close_fd(fd[1]);
-	return (hd_parent_wait(pid, fd[0], &oldint));
+	ret = hd_parent_wait(pid, fd[0], &oldint);
+	return (ret);
 }
