@@ -65,6 +65,7 @@ static void	exec_with_path(t_cmd *cmd, char **envp)
 	{
 		minishell_cmd_not_found(cmd->args[0]);
 		free_cmd(cmd);
+		free_args(envp);
 		exit(127);
 	}
 	execve(path, cmd->args, envp);
@@ -81,3 +82,4 @@ void	exec_external(t_cmd *cmd, char **envp)
 		exec_with_slash(cmd, envp);
 	exec_with_path(cmd, envp);
 }
+
