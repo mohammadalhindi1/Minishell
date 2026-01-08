@@ -21,4 +21,4 @@ file not exisst and comand not exist
 
 9- handle '' "" -- omar ✅✅✅
 
-10- minishell insside minishell and cntrl c       , echo $SHLVL bash
+10- minishell insside minishell and cntrl c       , echo $SHLVL bash ✅✅✅
