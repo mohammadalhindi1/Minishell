@@ -22,6 +22,40 @@ static void	exec_with_slash(t_cmd *cmd, char **envp)
 	exit(126);
 }
 
+
+// omar add
+
+
+static void	free_args(char **args)
+{
+	int	i;
+
+	if (!args)
+		return;
+	i = 0;
+	while (args[i])
+	{
+		free(args[i]);
+		i++;
+	}
+	free(args);
+}
+
+static void	free_cmd(t_cmd *cmd)
+{
+	if (!cmd)
+		return;
+
+	free_args(cmd->args);
+	free(cmd->infile);
+	free(cmd->outfile);
+	free(cmd->heredoc);
+
+	free(cmd);
+}
+
+// omar add
+
 static void	exec_with_path(t_cmd *cmd, char **envp)
 {
 	char	*path;
@@ -30,6 +64,7 @@ static void	exec_with_path(t_cmd *cmd, char **envp)
 	if (!path)
 	{
 		minishell_cmd_not_found(cmd->args[0]);
+		free_cmd(cmd);
 		exit(127);
 	}
 	execve(path, cmd->args, envp);
