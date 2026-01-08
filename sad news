@@ -2,7 +2,7 @@ mistakes
 
 1- leak in 
 file not exisst and comand not exist
-< file1 cmd1 | cmd2 file2 >  -- omar
+< file1 cmd1 | cmd2 file2 >  -- omar  ✅ its in your part mr abo el hendi but i did it ^_^
 
 
 2- you hande $? correcly but the value is wrong  -- omar
