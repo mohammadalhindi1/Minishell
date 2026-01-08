@@ -1,16 +1,4 @@
 mistakes
-
-1- leak in 
-file not exisst and comand not exist
-< file1 cmd1 | cmd2 file2 >  -- omar  ✅✅✅ its in your part mr abo el hendi but i did it ^_^
-
-
-2- you hande $? correcly but the value is wrong  -- omar   ✅✅✅
-
-
-3- cntrl \ is not handled -- omar ✅✅✅
-
-
 4- cd  -- hindi 
 
 5- export  -- hindi
@@ -18,7 +6,3 @@ file not exisst and comand not exist
 6- unset  -- hindi
 
 7- exit  -- hindi
-
-9- handle '' "" -- omar ✅✅✅
-
-10- minishell insside minishell and cntrl c       , echo $SHLVL bash ✅✅✅
