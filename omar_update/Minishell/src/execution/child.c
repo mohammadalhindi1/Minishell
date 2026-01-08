@@ -62,5 +62,7 @@ void	child_run(t_cmd *cmd, t_child_ctx *c)
 	close_if_needed(out_fd, STDOUT_FILENO, -1);
 	close_if_needed(c->prev_read, -1, -1);
 	close_if_needed(c->pipe_fd[1], -1, -1);
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 	exec_external(cmd, c->envp);
 }

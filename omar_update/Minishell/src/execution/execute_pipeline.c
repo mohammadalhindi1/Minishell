@@ -41,24 +41,38 @@ static int	wait_last_status(pid_t *pids, int n)
 int	execute_pipeline(t_cmd *cmds, int n, char **envp)
 {
 	t_exec_ctx	x;
+	struct sigaction	oldint;
+	struct sigaction	oldquit;
+	struct sigaction	ign;
 
 	if (!cmds || n <= 0)
 		return (0);
+	memset(&ign, 0, sizeof(ign));
+	ign.sa_handler = SIG_IGN;
+	sigaction(SIGINT, &ign, &oldint);
+	sigaction(SIGQUIT, &ign, &oldquit);
 	x.n = n;
 	x.envp = envp;
 	x.prev_read = -1;
 	if (prepare_heredocs(cmds, n, x.hd_fds))
-		return (g_exit_status);
+		return (sigaction(SIGINT, &oldint, NULL),
+			sigaction(SIGQUIT, &oldquit, NULL),
+			g_exit_status);
 	x.i = 0;
 	while (x.i < n)
 	{
 		if (spawn_cmd(cmds, &x))
-			return (1);
+			return (sigaction(SIGINT, &oldint, NULL),
+				sigaction(SIGQUIT, &oldquit, NULL),
+				1);
 		x.i++;
 	}
 	close_fd(x.prev_read);
 	x.i = 0;
 	while (x.i < n)
 		close_fd(x.hd_fds[x.i++]);
-	return (wait_last_status(x.pids, n));
+	x.i = wait_last_status(x.pids, n);
+	sigaction(SIGINT, &oldint, NULL);
+	sigaction(SIGQUIT, &oldquit, NULL);
+	return (x.i);
 }
