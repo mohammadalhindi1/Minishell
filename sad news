@@ -19,6 +19,6 @@ file not exisst and comand not exist
 
 7- exit  -- hindi
 
-9- handle '' "" -- omar
+9- handle '' "" -- omar ✅✅✅
 
 10- minishell insside minishell and cntrl c       , echo $SHLVL bash
