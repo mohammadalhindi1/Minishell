@@ -54,6 +54,7 @@ static void	free_cmd(t_cmd *cmd)
 	free(cmd);
 }
 
+
 // omar add
 
 static void	exec_with_path(t_cmd *cmd, char **envp)
@@ -82,4 +83,3 @@ void	exec_external(t_cmd *cmd, char **envp)
 		exec_with_slash(cmd, envp);
 	exec_with_path(cmd, envp);
 }
-

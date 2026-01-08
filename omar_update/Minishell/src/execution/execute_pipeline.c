@@ -47,6 +47,11 @@ int	execute_pipeline(t_cmd *cmds, int n, char **envp)
 
 	if (!cmds || n <= 0)
 		return (0);
+	if (n == 1 && is_builtin(&cmds[0]))
+	{
+		g_exit_status = run_builtin(&cmds[0], envp);
+		return (g_exit_status);
+	}
 	memset(&ign, 0, sizeof(ign));
 	ign.sa_handler = SIG_IGN;
 	sigaction(SIGINT, &ign, &oldint);

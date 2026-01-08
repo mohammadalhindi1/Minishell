@@ -37,6 +37,7 @@ SRCS = \
 	$(SRC_DIR)/execution/execute_pipeline_utils.c \
 	$(SRC_DIR)/execution/child.c \
 	$(SRC_DIR)/execution/child_exec.c \
+	$(SRC_DIR)/execution/builtins.c \
 	$(SRC_DIR)/execution/exec_utils.c \
 	$(SRC_DIR)/execution/redir.c \
 	$(SRC_DIR)/execution/heredoc.c \

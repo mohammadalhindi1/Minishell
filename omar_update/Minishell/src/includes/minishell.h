@@ -103,6 +103,7 @@ int	parse_line(char *line, t_cmd **cmds, int *count, t_shell *sh);
 char **expand_tokens(char **tokens, t_shell *sh);
 char *expand_one(char *tok, t_shell *sh);
 
-
+int		is_builtin(t_cmd *cmd);
+int	run_builtin(t_cmd *cmd, char **envp);
 
 #endif
