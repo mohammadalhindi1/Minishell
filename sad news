@@ -8,7 +8,7 @@ file not exisst and comand not exist
 2- you hande $? correcly but the value is wrong  -- omar   ✅✅✅
 
 
-3- cntrl \ is not handled -- omar
+3- cntrl \ is not handled -- omar ✅✅✅
 
 
 4- cd  -- hindi
