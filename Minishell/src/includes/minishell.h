@@ -71,6 +71,14 @@ typedef struct s_exec_ctx
 	char	**envp;
 }	t_exec_ctx;
 
+// token_handle and helper
+typedef struct s_lexer
+{
+	char	***tokens;
+	int		*words;
+	char	*line;
+}	t_lexer;
+
 /* ====== execution ====== */
 int		execute_pipeline(t_cmd *cmds, int n, char **envp);
 void	child_run(t_cmd *cmd, t_child_ctx *c);
@@ -123,5 +131,34 @@ char	*next_shlvl_value(char *current);
 
 //slvl2
 char	**update_shlvl(char **envp);
+
+//expand one
+char	*expand_one(char *tok, t_shell *sh);
+
+//token helper
+void	add_if_word(t_lexer *lx, int start, int end);
+void	scan_word(char *line, int *i);
+void	skip_spaces(char *line, int *i, int *start);
+void	handle_quotes(t_lexer *lx, int *i, int *start);
+char	**build_final_tokens(char **tokens, int words);
+
+// token handle
+void	handle_operator(t_lexer *lx, int *i, int *start);
+
+// token
+void	add_word_to_token(char ***tokens, int *words, char *line, t_range r);
+
+//parse args
+int		push_arg(t_cmd *cmd, char *tok);
+
+//parse helper
+int		is_op(char *t);
+char	*strip_quotes_dup(char *s);
+void	free_tokens(char **t);
+void	free_cmds_partial(t_cmd *cmds, int n);
+int		count_cmds(char **t);
+
+//parse redir
+int		apply_redir(t_cmd *cmd, char **t, int *i);
 
 #endif

@@ -44,9 +44,15 @@ SRCS = \
 	$(SRC_DIR)/execution/heredoc.c \
 	$(SRC_DIR)/execution/path.c \
 	$(SRC_DIR)/execution/global.c \
-	$(SRC_DIR)/parsing/minishell.c \
+	$(SRC_DIR)/parsing/main_parse.c \
+	$(SRC_DIR)/parsing/parse_argc.c \
+	$(SRC_DIR)/parsing/parse_helper.c \
+	$(SRC_DIR)/parsing/parse_redir.c \
 	$(SRC_DIR)/parsing/token.c \
+	$(SRC_DIR)/parsing/token_helper.c \
+	$(SRC_DIR)/parsing/token_handle.c \
 	$(SRC_DIR)/parsing/valid_check.c \
+	$(SRC_DIR)/parsing/expand_one.c \
 	$(SRC_DIR)/parsing/expand.c \
 	$(SRC_DIR)/helper/free.c \
 	$(SRC_DIR)/helper/slvl.c \
