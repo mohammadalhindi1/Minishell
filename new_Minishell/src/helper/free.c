@@ -44,3 +44,23 @@ void	free_cmds(t_cmd *cmds, int n)
 	}
 	free(cmds);
 }
+
+int	pipe_syntax_ok(char **t)
+{
+	int	i;
+
+	if (!t || !t[0])
+		return (1);
+	if (!ft_strncmp(t[0], "|", 2))
+		return (0);
+	i = 0;
+	while (t[i])
+	{
+		if (!ft_strncmp(t[i], "|", 2) && !t[i + 1])
+			return (0);
+		if (!ft_strncmp(t[i], "|", 2) && !ft_strncmp(t[i + 1], "|", 2))
+			return (0);
+		i++;
+	}
+	return (1);
+}

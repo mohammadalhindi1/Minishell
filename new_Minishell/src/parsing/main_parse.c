@@ -77,6 +77,12 @@ int	parse_line(char *line, t_cmd **cmds, int *count, t_shell *sh)
 	if (!expanded)
 		return (-1);
 	t = expanded;
+	if (!pipe_syntax_ok(t))
+	{
+		write(2, "minishell: syntax error near unexpected token `|'\n", 51);
+		g_exit_status = 258;
+		return (free_tokens(t), -1);
+	}
 	if (init_cmds(t, cmds, count) == -1)
 		return (free_tokens(t), -1);
 	if (parse_tokens_loop(t, *cmds, *count) == -1)

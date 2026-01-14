@@ -161,4 +161,8 @@ int		count_cmds(char **t);
 //parse redir
 int		apply_redir(t_cmd *cmd, char **t, int *i);
 
+//pipe handle
+int		pipe_syntax_ok(char **t);
+
+
 #endif

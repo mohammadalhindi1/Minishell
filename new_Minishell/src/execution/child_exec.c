@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <errno.h>
 
 static void	exec_with_slash(t_cmd *cmd, char **envp)
 {

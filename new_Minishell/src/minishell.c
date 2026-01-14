@@ -62,6 +62,11 @@ static int	shell_loop(char **shell_envp, t_shell *sh)
 		write(1, "exit\n", 5);
 		return (0);
 	}
+	if (!*line)
+	{
+		free(line);
+		return (1);
+	}
 	run_line(line, shell_envp, sh);
 	free(line);
 	return (1);
