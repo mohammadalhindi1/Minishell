@@ -36,7 +36,6 @@ cat < out
 echo b >> out
 cat < out | wc -l
 ``` 
-Everything above is working correctly.
 
 Shared Structure (Execution Contract)
 Parsing sends execution an array of commands using the following structure:
