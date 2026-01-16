@@ -1,180 +1,97 @@
 # Minishell
 
-A minimal Unix shell implemented in C as part of the 42 curriculum.
+*This project has been created as part of the 42 curriculum by oaletham, malhendi.*
 
-This project focuses on understanding how a shell works internally:
-process creation, pipes, redirections, signals, and command parsing.
+## Description
 
----
+**Minishell** is a simplified implementation of a Unix shell, developed as part of the 42 curriculum. Its goal is to deepen understanding of process creation, file descriptors, parsing, and terminal behavior by recreating core functionalities of Bash in C.
+
+This project allows users to interact with the system via an interface that interprets and executes shell commands. Through this, students explore the internal mechanics of how shells parse, handle redirections and pipes, manage child processes, and integrate built-in commands.
+
+Key learning outcomes include:
+- Mastering system calls like `fork`, `execve`, `pipe`, and `dup2`
+- Handling signals and process exit statuses
+- Managing memory allocations and avoiding leaks
+- Implementing a lexical analyzer and parser for shell syntax
+
+## Instructions
+
+### Compilation
+
+To compile the project, run:
+
 ```bash
 make
+```
+
+The project includes a standard `Makefile` with the following rules: `all`, `clean`, `fclean`, `re`.
+
+### Execution
+
+Once compiled, launch the shell with:
+
+```bash
 ./minishell
-valgrind ./minishell
-valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes --trace-children=yes ./minishell
 ```
 
-Project Status (Current)
-What is working now good
-Interactive shell prompt using readline
-Command execution using fork / execve
-Pipes |
-Redirections:
-input <
-output >
-append >>
-Waiting for children processes
-Proper error messages for:
-command not found
-missing files
-permission denied
+This will display a custom shell prompt and allow for command-line input.
 
-Tested examples:
-```
-echo hello | wc -l
-echo hello > out
-cat < out
-echo b >> out
-cat < out | wc -l
-``` 
+### Requirements
 
-Shared Structure (Execution Contract)
-Parsing sends execution an array of commands using the following structure:
-```
-typedef struct s_cmd
-{
-    char **args;      // argv-style array, args[0] is the command
-    char *infile;     // file for '<' redirection (NULL if none)
-    char *outfile;    // file for '>' or '>>' (NULL if none)
-    int   append;     // 0 => '>', 1 => '>>'
-    char *heredoc;    // delimiter for '<<' (NULL if none)
-} t_cmd;
-```
-The parser is responsible for building this structure correctly
-The executor only relies on this structure and does NOT re-parse input
+- Use of **GNU readline** for input handling and command history
+- Compilation must adhere to 42's Norm
+- No memory leaks (excluding internal leaks from `readline`)
+- Only one global variable is allowed (for signal handling)
 
-Work Split :
+## Features
 
-```
-Execution (Hindi)
-Responsible for everything after parsing:
-execute_pipeline()
-Pipes handling (pipe, dup2)
-Process creation (fork, execve)
-Redirections <, >, >>
-Heredoc execution logic
-Waiting for children & exit status
-Error handling and messages
+- Display prompt and accept user input
+- Parse commands and arguments
+- Support for single and double quotes
+- Input/output redirections: `<`, `>`, `<<`, `>>`
+- Environment variable expansion, including `$?`
+- Piping (`|`) between commands
+- Signal handling (`Ctrl-C`, `Ctrl-D`, `Ctrl-\`)
+- Execution of both built-in and external commands
 
+### Built-in Commands
 
-Parsing (Omar)
-Responsible for transforming raw input into t_cmd[]:
-Tokenizing input
-Syntax validation
-Handling quotes
-Building the t_cmd array correctly
-Important for parsing:
-Execution assumes parsing is correct.
-If parsing outputs invalid t_cmd, execution behavior is undefined.
-```
+- `echo [-n]`
+- `cd [dir]`
+- `pwd`
+- `export [VAR=value]`
+- `unset [VAR]`
+- `env`
+- `exit`
 
-Tests to Run Now (Execution + Parsing)
-Pipes
-```
-ls | wc -l
-cat file | grep hello | wc -l
-```
+## Resources
 
-Redirections
-```
-echo a > out && cat < out
-echo b >> out && cat < out
-cat < missingfile
-```
+### References
 
+- [GNU Bash Manual](https://www.gnu.org/software/bash/manual/bash.html)
+- [Advanced Linux Programming](https://www.advancedlinuxprogramming.com/)
+- `man` pages: `bash`, `execve`, `fork`, `pipe`, `dup2`, `signal`, `readline`
+- [UNIX Programming FAQ](https://www.faqs.org/faqs/unix-faq/)
 
-Mixed pipes + redirections
-```
-cat < out | wc -l
-echo hello | wc -l > count.txt
-cat < out | wc -l >> log.txt
-```
+### Use of AI
 
-Parsing Rules That MUST Work (Omar)
-Quotes must behave like bash:
-```
-echo "hello world"
-echo 'hello $USER'     # no expansion inside single quotes
-echo "$USER"           # expansion later
-echo "a | b"           # pipe inside quotes must NOT split
-echo "a > b"           # redirection inside quotes must NOT apply
-```
+AI tools were used responsibly to:
+- Draft parts of this README
+- Review and debug parsing logic in the lexer
+- Generate test scenarios for edge cases
+- Refactor repetitive code segments (only after manual understanding)
 
-Syntax errors must be detected:
+All AI-generated content was critically reviewed and verified with peers to ensure full understanding and compliance with 42’s academic integrity guidelines.
 
-| |
-pipe at start or end
-missing file after < > >> <<
-Heredoc parsing:
-delimiter must be exact
-stop reading only on exact match
-no history entry for heredoc input
-Environment expansion (later):
-$VAR
-$?
+## Technical Notes
 
-Heredoc (To Implement / Verify)
-```
-cat << EOF
-type lines
-end with EOF
-```
+- Only one global variable is used for signal communication, per spec
+- Built-in commands are handled internally; others are executed via `execve`
+- Parsing supports tokenization, quoting rules, and environment expansion
+- Redirections and pipes are managed using file descriptors and process forking
+- Interactive shell behavior mimics Bash in terms of signal response and prompt handling
 
-Also:
-```
-cat << EOF | wc -l
-a
-b
-EOF
-```
-Ctrl-C during heredoc must:
-cancel heredoc
-return to a clean prompt
-not execute the pipeline
+## Authors
 
-```
-Exit Status (To Implement / Verify) :
-Last command in pipeline defines exit status
-command not found => 127
-signal termination => 128 + signal number
-$? expansion (later)
-
-What Is Still Missing (Planned):
-
-Parsing (Omar):
-Correct quote handling
-Full syntax validation
-Environment expansion $VAR, $?
-Robust heredoc parsing rules
-```
-
-Execution (Hindi):
-Final heredoc polish
-Builtins:
-```
-cd
-export
-unset
-exit
-env
-pwd
-echo -n
-Signal behavior like bash:
-Ctrl-C → new prompt
-Ctrl-D → exit shell
-Ctrl-\ → ignored
-Valgrind / memory cleanup (planned)
-```
-Notes:
-Execution and parsing are strictly separated
-The t_cmd structure is the only contract between them
-Keeping this separation is critical for project stability
+- [oaletham](https://github.com/oaletham)
+- [malhendi](https://github.com/malhendi)
