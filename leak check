@@ -1,1 +1,7 @@
-valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline_curses.supp ./minishell
+```
+1-how to test without readline leaks
+
+2- download this file ---> readline_curses.supp
+
+3 - valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline_curses.supp ./minishell
+```
