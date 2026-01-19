@@ -1,0 +1,50 @@
+syntax: 
+<<<< ---> minishell: syntax error near unexpected token `<' ---> $? 2✅✅
+>>>> ---> minishell: syntax error near unexpected token `>' ---> $? 2✅✅
+
+Expander:
+echo $0$1230$0 ---> minishell230minishell ---> $? 0 ✅✅
+
+
+Export:
+export 1test ---> minishell: export: `1test': not a valid identifier ---> $? 1 ✅✅
+
+PIPES:
+. | .. | .  ---> minishell> ---> $? 0✅✅
+exit 1 | exit 255 | exit 2 --->  minishell>  ---> $? 2     (the $? only) ✅✅
+
+
+Exit:
+exit 9223372036854775808 ---> minishell: exit: 9223372036854775808 : numeric argument required ---> $? 2 ✅✅
+NOTE: that ---> exit 9223372036854775807 ---> exit 9223372036854775807 ---> $? 255  ✅✅
+
+
+Signals:
+CTRL+C ---> $? 130 ✅✅
+
+ sleep 1 | ls | sleep 1000 ---> After one second use "ps -eo pid,ppid,stat,cmd | grep Z" in another teminal shound not found Z ✅✅
+
+sleep 10 | sleep 10 | sleep 10 ---> then cntrl c and then  "ps -eo stat,cmd | grep Z"  should not found Z ✅✅
+
+
+Redirections:
+
+> / --- > minishell: /: Is a directory  ---> echo $? 1  ✅✅
+
+<< 123  ✅✅
+CTRL+C ---> leaks  ✅✅
+
+<< 123 cat  ✅✅
+1234 ✅✅
+CTRL+D --- > leaks   ✅✅
+
+export test=”123 test” ✅✅
+< $test ✅✅
+
+export test=”123 test” ✅✅
+ls > $test ✅✅
+
+
+expand in here doc
+
+multiple heredoc
