@@ -15,5 +15,6 @@
 
 4 -- {
   vim man                  ----> in the man file put echo fgfdgfdgfd
+chmod 777 man
   ./man
 }
