@@ -6,6 +6,8 @@
 3 - valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline_curses.supp ./minishell
 
 4- valgrind --leak-check=full --track-fds=yes --track-origins=yes -s --suppressions=readline_curses.supp ./minishell
+
+5-valgrind --leak-check=full --track-fds=yes --track-origins=yes --trace-children=yes -s --suppressions=readline_curses.supp ./minishell
 ```
 2 -- {
   export a="yaman's book"
