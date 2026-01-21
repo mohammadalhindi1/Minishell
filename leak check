@@ -5,3 +5,15 @@
 
 3 - valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline_curses.supp ./minishell
 ```
+1 -- ls "-l'a"
+
+2 -- {
+  export a="yaman's book"
+}
+
+3 -- > o > ou ls > p
+
+4 -- {
+  vim man                  ----> in the man file put echo fgfdgfdgfd
+  ./man
+}
