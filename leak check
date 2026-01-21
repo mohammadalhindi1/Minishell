@@ -9,14 +9,9 @@
 
 5-valgrind --leak-check=full --track-fds=yes --track-origins=yes --trace-children=yes -s --suppressions=readline_curses.supp ./minishell
 ```
-2 -- {
-  export a="yaman's book"
-}
 
-3 -- > o > ou ls > p
+1 -- export a="yaman's book"
 
-4 -- {
-  vim man                  ----> in the man file put echo fgfdgfdgfd
+2 -- vim man                  ----> in the man file put echo fgfdgfdgfd
 chmod 777 man
   ./man
-}
