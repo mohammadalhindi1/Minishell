@@ -9,9 +9,3 @@
 
 5-valgrind --leak-check=full --track-fds=yes --track-origins=yes --trace-children=yes -s --suppressions=readline_curses.supp ./minishell
 ```
-
-1 -- export a="yaman's book"
-
-2 -- vim man                  ----> in the man file put echo fgfdgfdgfd
-chmod 777 man
-  ./man
